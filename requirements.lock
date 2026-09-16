@@ -1,0 +1,11 @@
+# Tested dependency versions. Wheels are selected for the target platform.
+PySide6==6.11.2
+shiboken6==6.11.2
+PySide6_Essentials==6.11.2
+PySide6_Addons==6.11.2
+Pillow==12.3.0
+openpyxl==3.1.5
+et_xmlfile==2.0.0
+pydicom==3.0.2
+pynetdicom==3.0.4
+imageio-ffmpeg==0.6.0
