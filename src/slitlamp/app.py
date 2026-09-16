@@ -21,7 +21,12 @@ def main(argv=None):
     parser.add_argument(
         "--choose-archive", action="store_true", help="Choose a different local archive before starting"
     )
+    parser.add_argument("--package-check", type=Path, help=argparse.SUPPRESS)
     args = parser.parse_args(argv)
+    if args.package_check:
+        from .smoke import run
+
+        return run(args.package_check)
     app = QApplication(sys.argv[:1])
     app.setApplicationName("Slitlamp Studio")
     app.setOrganizationName("Slitlamp Studio")
