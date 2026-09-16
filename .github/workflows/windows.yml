@@ -1,0 +1,47 @@
+name: Windows tests and installer
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test-and-package:
+    runs-on: windows-latest
+    timeout-minutes: 25
+    env:
+      QT_QPA_PLATFORM: offscreen
+      PYTHONPATH: src
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          architecture: x64
+          cache: pip
+          cache-dependency-path: requirements.lock
+      - name: Install dependencies
+        run: |
+          python -m pip install -r requirements.lock
+          python -m pip install pytest pytest-qt ruff
+      - name: Lint
+        run: python -m ruff check src tests scripts
+      - name: Test workflows and desktop UI
+        run: python -m pytest -q --junitxml=test-results/junit.xml
+      - name: Package Windows app and installer
+        shell: pwsh
+        run: ./scripts/build_windows.ps1
+      - name: Upload Windows package
+        uses: actions/upload-artifact@v4
+        with:
+          name: SlitlampStudio-Windows-x64
+          path: |
+            dist/SlitlampStudio/
+            dist/installer/*.exe
+          retention-days: 30
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: test-results/
